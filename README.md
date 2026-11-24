@@ -1,6 +1,6 @@
 # tells
 
-Points out the habits that make text and code read as machine-written, in English and Turkish. It doesn't rewrite anything and it doesn't guess who wrote what. It lists the lines worth a second look.
+Points out the habits that make text and code read as machine-written, in English and Turkish. It doesn't rewrite anything; it lists the lines worth a second look.
 
 <!-- tells: off -->
 ```
@@ -24,9 +24,9 @@ notes.md:7:1: chat-leftover: "I hope this helps"
 
 It's meant for a last pass before publishing a README, a post or a repo. Some hits will be fine as they are; treat the output as a reading list.
 
-## Running it
+## Install and run
 
-Python 3.9+, standard library only. Download `tells.py` or clone the repo, then:
+It's a single file with no dependencies (Python 3.9+). Download `tells.py` or clone the repo, then:
 
 ```
 python3 tells.py README.md

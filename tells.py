@@ -5,7 +5,7 @@
     python3 tells.py --git            # also look at commit messages
     python3 tells.py --json docs/ > report.json
 
-English and Turkish. Every hit is a line worth rereading.
+English and Turkish.
 """
 
 import argparse

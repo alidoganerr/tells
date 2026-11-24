@@ -1,6 +1,6 @@
 ---
 name: tells
-description: Run after writing or editing prose that a person will publish under their own name (README, docs, release notes, blog post, LinkedIn post, commit messages) to catch the habits of machine-written text in English or Turkish, then fix the lines it flags.
+description: Run after writing or editing prose that will be published (README, docs, release notes, blog post, LinkedIn post, commit messages) to catch the habits of machine-written text in English or Turkish, then fix the lines it flags.
 ---
 
 # tells
@@ -13,7 +13,7 @@ curl -sO https://raw.githubusercontent.com/alidoganerr/tells/main/tells.py
 
 ## When
 
-After you've written or changed text someone will publish as their own. Skip it for chat replies and throwaway notes.
+After you've written or changed text that will be published. Skip it for chat replies and throwaway notes.
 
 ## How
 
