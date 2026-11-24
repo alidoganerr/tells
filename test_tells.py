@@ -24,16 +24,34 @@ class ProseTests(unittest.TestCase):
         text = "Let's delve into it.\nBu bağlamda önemli bir rol oynar.\n"
         found = [f.text for f in tells.check_text_file("a.md", text)]
         self.assertIn('"delve"', found)
-        self.assertIn('"bu bağlamda"', found)
+        self.assertIn('"Bu bağlamda"', found)
         self.assertIn('"önemli bir rol oynar"', found)
 
     def test_turkish_capitals(self):
         # capital first letter, and İ lowered the Turkish way
         out = tells.check_text_file("a.md", "Elbette! KESİNLİKLE.\n")
-        self.assertEqual([f.text for f in out], ['"elbette"', '"kesinlikle"'])
+        self.assertEqual([f.text for f in out], ['"Elbette"', '"KESİNLİKLE"'])
 
     def test_no_match_inside_words(self):
         self.assertEqual(tells.check_text_file("a.md", "fosterage, delves? no: robustness\n"), [])
+
+    def test_mektedir_chain(self):
+        one = "Rapor her hafta hazırlanmaktadır.\n"
+        two = "Veriler toplanmaktadır ve analiz edilmektedir.\n"
+        self.assertEqual(tells.check_text_file("a.md", one), [])
+        out = tells.check_text_file("a.md", two)
+        self.assertEqual(rules(out), ["tr-mektedir"])
+        self.assertIn("edilmektedir", out[0].text)
+        wrapped = "Rapor her hafta hazırlanmaktadır ve\nekiple paylaşılmaktadır.\n\nYeni paragraf yapılmaktadır.\n"
+        out = tells.check_text_file("a.md", wrapped)
+        self.assertEqual([(f.rule, f.line) for f in out], [("tr-mektedir", 2)])
+
+    def test_not_only(self):
+        en = tells.check_text_file("a.md", "It is not only fast but also small.\n")
+        tr = tells.check_text_file("a.md", "Bu araç sadece hızlı değil, aynı zamanda ucuz.\n")
+        self.assertEqual(rules(en), ["not-only"])
+        self.assertEqual(rules(tr), ["not-only"])
+        self.assertEqual(tells.check_text_file("a.md", "Sadece iki kişi geldi, değil mi?\n"), [])
 
     def test_chat_leftover(self):
         out = tells.check_text_file("a.md", "I hope this helps.\n")

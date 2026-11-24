@@ -1,0 +1,30 @@
+name: tells
+description: Flag the habits of machine-written text in docs, Python files and commit messages (English and Turkish).
+author: Ali Doğaner
+branding:
+  icon: eye
+  color: gray-dark
+inputs:
+  paths:
+    description: Files or folders to check, separated by spaces.
+    default: "."
+  ignore:
+    description: Comma separated rules to skip, e.g. em-dash,stock-phrase
+    default: ""
+  git:
+    description: Also check commit messages. Needs actions/checkout with fetch-depth 0.
+    default: "false"
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        TELLS_PATHS: ${{ inputs.paths }}
+        TELLS_IGNORE: ${{ inputs.ignore }}
+        TELLS_GIT: ${{ inputs.git }}
+      run: |
+        args=()
+        [ -n "$TELLS_IGNORE" ] && args+=(--ignore "$TELLS_IGNORE")
+        [ "$TELLS_GIT" = "true" ] && args+=(--git)
+        # word splitting on purpose: paths come as one space separated string
+        python3 "$GITHUB_ACTION_PATH/tells.py" "${args[@]}" $TELLS_PATHS

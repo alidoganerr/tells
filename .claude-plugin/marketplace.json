@@ -1,0 +1,11 @@
+{
+  "name": "tells",
+  "owner": { "name": "Ali Doğaner" },
+  "plugins": [
+    {
+      "name": "tells",
+      "source": "./",
+      "description": "Checks drafts, docs and commit messages for the habits of machine-written text, in English and Turkish."
+    }
+  ]
+}

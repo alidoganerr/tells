@@ -1,0 +1,8 @@
+{
+  "name": "tells",
+  "version": "0.1.0",
+  "description": "Checks drafts, docs and commit messages for the habits of machine-written text, in English and Turkish.",
+  "author": { "name": "Ali Doğaner" },
+  "homepage": "https://github.com/alidoganerr/tells",
+  "license": "MIT"
+}

@@ -5,7 +5,7 @@
     python3 tells.py --git            # also look at commit messages
     python3 tells.py --json docs/ > report.json
 
-English and Turkish. Every hit is a hint to reread a line, not a verdict.
+English and Turkish. Every hit is a line worth rereading.
 """
 
 import argparse
@@ -40,6 +40,10 @@ TR_PHRASES = [
     "sorunsuz bir şekilde", "hayati önem taşır", "günümüzün hızla değişen", "dikkat çekmek isterim",
     "şunu belirtmek gerekir", "belirtmek isterim ki", "altını çizmek gerekir", "son derece önemlidir",
     "en iyi şekilde", "bir sonraki seviyeye", "yolculuğunuzda", "keşfedelim",
+    "çığır açan", "devrim niteliğinde", "oyunun kurallarını değiştiren", "bir göz atalım",
+    "derinlemesine dalalım", "devreye giriyor", "günün sonunda", "dürüst olmak gerekirse",
+    "büyük önem taşımaktadır", "kritik öneme sahiptir", "hızla gelişen dünyada", "dijital çağda",
+    "değer katmak", "fark yaratmak",
 ]
 # Leftovers from a chat window.
 CHAT_LEFTOVERS = [
@@ -58,10 +62,15 @@ ASSISTANT_MARKS = [
 NARRATING = re.compile(
     r"^#\s*(import|initiali[sz]e|create|set|get|return|loop|iterate|call|define|increment|"
     r"check if|append|add|print|open|close|update)\b[^.]{0,40}$", re.I)
+NOT_ONLY = re.compile(r"(?<![\wçğıöşü])(not (?:only|just) .{1,60}? but|"
+                      r"sadece .{1,60}? değil,? (?:aynı zamanda|ayrıca)|"
+                      r"yalnızca .{1,60}? değil,? (?:aynı zamanda|ayrıca))", re.I)
 BANNER = re.compile(r"^\s*#\s*([-=#*~_]{3,}|.*\s[-=]{3,}\s*$)")
 BOLD_LEAD = re.compile(r"^\s*[-*+]\s+\*\*[^*]+\*\*")
 EMOJI_HEADING = re.compile(r"^\s*#{1,6}\s.*[\U0001F300-\U0001FAFF☀-➿]")
 WORD = re.compile(r"[a-zçğıöşü]+", re.I)
+# one "-maktadır" verb is fine; two in the same paragraph start to sound like a report
+MEKTEDIR = re.compile(r"[a-zçğıöşü]+m[ae]kt[ae]d[ıi]r(?:lar|ler)?(?![a-zçğıöşü])", re.I)
 
 ALL_RULES = {
     "em-dash": "em dash; a comma, colon or full stop usually reads better",
@@ -75,6 +84,8 @@ ALL_RULES = {
     "narrating-comment": "comment that repeats the next line",
     "echo-docstring": "docstring that repeats the function name",
     "docstring-everywhere": "nearly every function has a docstring",
+    "not-only": "\"not only X but Y\" / \"sadece X değil, aynı zamanda Y\"",
+    "tr-mektedir": "-mektedir/-maktadır twice in one paragraph; -iyor or -ır usually reads more natural",
 }
 
 
@@ -110,18 +121,24 @@ def check_prose(path, lines, first_line=1):
     or (line_no, text) pairs when the lines aren't contiguous."""
     out = []
     bold_items = []
+    para_mk = []  # -maktadır verbs seen in the current paragraph
+    prev_n = None
     for i, item in enumerate(lines):
         n, line = item if isinstance(item, tuple) else (first_line + i, item)
+        if not line.strip() or (prev_n is not None and n != prev_n + 1):
+            para_mk = []
+        prev_n = n
         if "tells: ignore" in line:
             continue
         low = _tr_lower(line)
         col = line.find(EM_DASH)
         if col >= 0:
             out.append(Finding(path, n, col + 1, "em-dash", ALL_RULES["em-dash"]))
+        # show the words as written; low is only for matching
         for m in STOCK.finditer(low):
-            out.append(Finding(path, n, m.start() + 1, "stock-phrase", '"%s"' % m.group(1)))
+            out.append(Finding(path, n, m.start() + 1, "stock-phrase", '"%s"' % line[m.start():m.end()]))
         for m in CHAT.finditer(low):
-            out.append(Finding(path, n, m.start() + 1, "chat-leftover", '"%s"' % m.group(1)))
+            out.append(Finding(path, n, m.start() + 1, "chat-leftover", '"%s"' % line[m.start():m.end()]))
         for rx in ASSISTANT_MARKS:
             m = rx.search(line)
             if m:
@@ -131,6 +148,13 @@ def check_prose(path, lines, first_line=1):
             bold_items.append(n)
         if EMOJI_HEADING.match(line):
             out.append(Finding(path, n, 1, "emoji-heading", ALL_RULES["emoji-heading"]))
+        m = NOT_ONLY.search(low)
+        if m:
+            out.append(Finding(path, n, m.start() + 1, "not-only", line[m.start():m.end()][:60]))
+        for m in MEKTEDIR.finditer(low):
+            para_mk.append(line[m.start():m.end()])
+            if len(para_mk) == 2:
+                out.append(Finding(path, n, m.start() + 1, "tr-mektedir", ", ".join(para_mk)))
     # one or two bold labels are fine; a whole run of them is the pattern
     if len(bold_items) >= 3:
         out.append(Finding(path, bold_items[0], 1, "bold-lead-list",
@@ -307,6 +331,7 @@ def main(argv=None):
     if args.git:
         findings.extend(check_commits(args.paths[0] if args.paths and os.path.isdir(args.paths[0]) else "."))
     findings = [f for f in findings if f.rule not in skip]
+    findings.sort(key=lambda f: (f.path, f.line, f.col))
 
     if args.json:
         json.dump([f.as_dict() for f in findings], sys.stdout, ensure_ascii=False, indent=1)

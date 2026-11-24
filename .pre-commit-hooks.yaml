@@ -1,0 +1,6 @@
+- id: tells
+  name: tells
+  description: Flag the habits of machine-written text
+  entry: tells.py
+  language: script
+  types_or: [markdown, python, rst, plain-text]
