@@ -63,7 +63,7 @@ GitHub Action:
 - uses: actions/checkout@v4
   with:
     fetch-depth: 0          # only needed for git: true
-- uses: alidoganerr/tells@v0.1.0
+- uses: alidoganerr/tells@v0.1.1
   with:
     paths: README.md docs
     ignore: em-dash
@@ -74,7 +74,7 @@ pre-commit:
 
 ```yaml
 - repo: https://github.com/alidoganerr/tells
-  rev: v0.1.0
+  rev: v0.1.1
   hooks:
     - id: tells
 ```
