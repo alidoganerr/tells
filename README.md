@@ -1,5 +1,7 @@
 # tells
 
+[![test](https://github.com/alidoganerr/tells/actions/workflows/test.yml/badge.svg)](https://github.com/alidoganerr/tells/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 Points out the habits that make text and code read as machine-written, in English and Turkish. It doesn't rewrite anything; it lists the lines worth a second look.
 
 <!-- tells: off -->
@@ -26,15 +28,19 @@ It's meant for a last pass before publishing a README, a post or a repo. Some hi
 
 ## Install and run
 
-It's a single file with no dependencies (Python 3.9+). Download `tells.py` or clone the repo, then:
+```
+pipx install git+https://github.com/alidoganerr/tells
+```
 
 ```
-python3 tells.py README.md
-python3 tells.py src/ docs/
-python3 tells.py --git .
-python3 tells.py --json . > findings.json
-python3 tells.py --rules
+tells README.md
+tells src/ docs/
+tells --git .
+tells --json . > findings.json
+tells --rules
 ```
+
+It's a single file with no dependencies (Python 3.9+), so you can also skip the install and run `python3 tells.py` from a clone.
 
 Each finding is `path:line:col: rule: detail`. The exit code is 1 when anything turns up.
 

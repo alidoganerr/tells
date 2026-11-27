@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tells"
+version = "0.1.1"
+description = "Points out the habits that make text and code read as machine-written. English and Turkish."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+
+[project.scripts]
+tells = "tells:main"
+
+[project.urls]
+Homepage = "https://github.com/alidoganerr/tells"
+
+[tool.setuptools]
+py-modules = ["tells"]
