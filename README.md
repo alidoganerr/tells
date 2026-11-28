@@ -95,7 +95,7 @@ The phrase lists sit at the top of `tells.py`. They're short on purpose and you'
 
 ## Caveats
 
-People write em dashes too, and every word on the stock list has honest uses. A clean run doesn't prove anything either.
+People write em dashes too, and every word on the stock list has legitimate uses. A clean run doesn't prove anything either.
 
 The Turkish list is shorter than the English one. Matching is plain text, so a reworded phrase gets through.
 

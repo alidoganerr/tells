@@ -77,7 +77,7 @@ ALL_RULES = {
     "stock-phrase": "stock phrase",
     "chat-leftover": "chat reply leftover",
     "assistant-mark": "says it was written by an assistant",
-    "bold-lead-list": "list where every item starts with a bold label",
+    "bold-lead-list": "three or more list items that start with a bold label",
     "emoji-heading": "emoji in a heading",
     "long-test-name": "test name reads like a sentence",
     "banner-comment": "section banner comment",
